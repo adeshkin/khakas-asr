@@ -1,6 +1,7 @@
 # khakas-asr
 
 ---
+
 https://github.com/common-voice/common-voice/issues/5278
 Мы добавили хакасский в Pontoon, платформу локализации Mozilla: https://pontoon.mozilla.org/kjh/common-voice/
 Вам нужно будет довести вот эти пять строк до 100% перевода:
