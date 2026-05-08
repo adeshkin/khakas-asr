@@ -1,5 +1,9 @@
 # khakas-asr
 
+
+
+prepare_sentences_for_common_voice.py
+добавил около 1000 предложений из Маленького принца (которые подошли по длине)
 ---
 
 https://github.com/common-voice/common-voice/issues/5278

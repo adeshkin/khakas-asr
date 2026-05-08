@@ -1,0 +1,4 @@
+razdel
+sacremoses
+scikit-learn
+pandas
