@@ -2,3 +2,5 @@ razdel
 sacremoses
 scikit-learn
 pandas
+datasets
+python-dotenv

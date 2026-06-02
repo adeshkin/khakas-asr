@@ -14,7 +14,7 @@ def count_syllables(text):
 def filter_sentences(sentences):
     filtered_sentences = []
 
-    allowed_pattern = re.compile(r'^[А-Яа-яЁёІіҒғҢңҶҷӦӧӰӱ\s.,!?]+$')
+    allowed_pattern = re.compile(r'^[А-Яа-яЁёІіҒғҢңҶҷӦӧӰӱ\s.,!?"\-:]+$')
     acronym_pattern = re.compile(r'\b[А-ЯЁІҒҢҶӦӰ]{2,}\b')
 
     for sentence in sentences:
@@ -22,6 +22,9 @@ def filter_sentences(sentences):
         sentence = re.sub(r'\s+([.,!?])', r'\1', sentence)
 
         original = sentence.strip()
+        if len(original) < 5:
+            continue
+
         if not original:
             continue
 
@@ -41,6 +44,10 @@ def filter_sentences(sentences):
             continue
 
         if acronym_pattern.search(original):
+            print(original)
+            continue
+
+        if "(" in original or ")" in original:
             continue
 
         if not allowed_pattern.match(original):
@@ -99,6 +106,42 @@ def main():
 
     df.to_csv('/home/adeshkin/Downloads/common_voice_little_prince.csv', index=False)
 
+def main1():
+    df = pd.read_csv('/home/adeshkin/Downloads/common_voice - life_fix_finalize.csv')
+    df = df.dropna()
+    df = df.fillna('')
+    kjh_sents = df['Хакасский'].values.tolist()
+    text = ' '.join(kjh_sents)
+    print(repr(''.join(sorted(set(text)))))
+
+    chosen_sentences = df['Хакасский'].values.tolist()
+    filtered_sentences = filter_sentences(chosen_sentences)
+    print('filtered_sentences', len(filtered_sentences))
+
+    df = pd.DataFrame(filtered_sentences, columns=['kjh'])
+    df['syl_count'] = df['kjh'].apply(lambda x: count_syllables(x))
+    df = df[(df['syl_count'] >= 5) & (df['syl_count'] <= 30)]
+    df['kjh'] = df['kjh'].apply(lambda x: x.removeprefix("– "))
+
+    print(len(df))
+    df['kjh_lower'] = df['kjh'].str.lower()
+    df['kjh_word'] = df['kjh_lower'].apply(clean_text)
+    df = df.drop_duplicates(subset='kjh_word', keep='first')
+    print(len(df))
+    #
+    # # df, _ = train_test_split(
+    # #     df,
+    # #     train_size=1000,
+    # #     stratify=df['syl_count'],
+    # #     random_state=42
+    # # )
+    #
+    with open('/home/adeshkin/Downloads/common_voice_life_final.txt', 'w') as f:
+        for sent in df['kjh'].values.tolist():
+            f.write(sent.strip() + '\n')
+    #
+    # df.to_csv('/home/adeshkin/Downloads/common_voice_little_prince.csv', index=False)
+
 
 if __name__ == '__main__':
-    main()
+    main1()
